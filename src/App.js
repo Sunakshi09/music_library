@@ -1,3 +1,4 @@
+import "./App.css";
 import { useState, useEffect, Fragment } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Gallery from "./Components/Gallery.js";
