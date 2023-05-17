@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function SearchBar(props) {
+const SearchBar = (props) => {
   let [searchTerm, setSearchTerm] = useState("");
 
   return (
@@ -14,6 +14,6 @@ function SearchBar(props) {
       <input type="submit" />
     </form>
   );
-}
+};
 
 export default SearchBar;
