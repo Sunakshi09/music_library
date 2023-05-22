@@ -1,34 +1,30 @@
-import { useState, useEffect, Fragment } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Gallery from "./Components/Gallery.js";
-import Searchbar from "./Components/Searchbar.js";
-import AlbumView from "./Components/AlbumView";
+import "./App.css";
+import { useState, Suspense, useRef } from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import ArtistView from "./Components/ArtistView";
+import AlbumView from "./Components/AlbumView";
+import Gallery from "./Components/Gallery";
+import SearchBar from "./Components/SearchBar";
 import Spinner from "./Components/Spinner";
+import { DataContext } from "./context/DataContext";
+import { SearchContext } from "./context/SearchContext";
 import { createResource as fetchData } from "./helper";
-function App() {
-  let [searchTerm, setSearchTerm] = useState("");
-  let [message, setMessage] = useState("Search for Music!");
-  let [data, setData] = useState(null);
 
-  useEffect(() => {
-    if (searchTerm) {
-      document.title = `${searchTerm} Music`;
-      console.log(fetchData(searchTerm));
-      setData(fetchData(searchTerm));
-    }
-  }, [searchTerm]);
+const App = () => {
+  let searchInput = useRef("");
+  let [data, setData] = useState(null);
+  let [message, setMessage] = useState("Search for Music!");
 
   const handleSearch = (e, term) => {
     e.preventDefault();
-    setSearchTerm(term);
+    setData(fetchData(term, "main"));
   };
 
   const renderGallery = () => {
     if (data) {
       return (
         <Suspense fallback={<Spinner />}>
-          <Gallery data={data} />
+          <Gallery />
         </Suspense>
       );
     }
@@ -36,11 +32,27 @@ function App() {
 
   return (
     <div className="App">
-      <SearchBar handleSearch={handleSearch} />
       {message}
-      {renderGallery()}
+      <Router>
+        <Route exact path={"/"}>
+          <SearchContext.Provider
+            value={{ term: searchInput, handleSearch: handleSearch }}
+          >
+            <SearchBar />
+          </SearchContext.Provider>
+          <DataContext.Provider value={data}>
+            {renderGallery()}
+          </DataContext.Provider>
+        </Route>
+        <Route path="/album/:id">
+          <AlbumView />
+        </Route>
+        <Route path="/artist/:id">
+          <ArtistView />
+        </Route>
+      </Router>
     </div>
   );
-}
+};
 
 export default App;
