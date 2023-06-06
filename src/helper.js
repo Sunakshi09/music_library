@@ -1,10 +1,10 @@
-const fetchSearch = (searchTerm) => {
-  return fetch(`http://localhost:3000/main/${searchTerm}`)
+const fetchSearch = (searchTerm, path) => {
+  return fetch(`http://localhost:4000/${path}/${searchTerm}`)
     .then((response) => response.json())
     .then((resData) => resData.results);
 };
 
-const wrapPromise = async (promise) => {
+const wrapPromise = (promise) => {
   let status = "pending";
   let result = "";
   let suspender = promise.then(
@@ -29,8 +29,8 @@ const wrapPromise = async (promise) => {
   };
 };
 
-export const createResource = (searchTerm) => {
+export const createResource = (searchTerm, path) => {
   return {
-    result: wrapPromise(fetchSearch(searchTerm)),
+    result: wrapPromise(fetchSearch(searchTerm, path)),
   };
 };
